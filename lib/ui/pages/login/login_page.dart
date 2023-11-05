@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tccApp/ui/pages/principal/menu.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 
 FlutterSecureStorage storage = FlutterSecureStorage();
 
@@ -14,14 +18,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final List<Map<String, dynamic>> items = [];
   void _login() {
+    
     final username = _usernameController.text;
     final password = _passwordController.text;
     if (username == 'daniel' && password == 'abc123') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MenuPage(username: username)),
+        MaterialPageRoute(builder: (context) => MenuPage(username: username,items: items)),
       );
     } else {
       // Tratar caso de credenciais inválidas
@@ -48,8 +53,32 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    fetchDataAndAddToList(items);
   }
 
+  Future<void> fetchDataAndAddToList(List<Map<String, dynamic>> items) async {
+    final response = await http.get(Uri.parse('http://4.228.23.227/not_recommend/'));
+    // final response = await http.get(Uri.parse('http://4.228.23.227/recommend/?skip=0&limit=10'));
+    if (response.statusCode == 200) {
+      final List<dynamic> responseDataList = json.decode(response.body);
+
+      for (var responseData in responseDataList) {
+        List<int> imageBytes = base64.decode(responseData['poster']);
+
+        final img.Image image = img.decodeImage(Uint8List.fromList(imageBytes))!;
+        final Uint8List uint8List = Uint8List.fromList(img.encodePng(image));
+
+        items.add({
+          'title': responseData['title'],
+          'poster': uint8List,
+          'description': responseData['description'],
+          'id': responseData['movieId'],
+        });
+      }
+    } else {
+      throw Exception('Falha ao carregar os dados da API');
+    }
+  }
   
 
   @override

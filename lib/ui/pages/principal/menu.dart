@@ -1,14 +1,37 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tccApp/ui/pages/login/login_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:http/http.dart' as http;
 
 
-
-class MenuPage extends StatelessWidget {
+class MenuPage extends StatefulWidget {
   final String username;
+  final List<Map<String, dynamic>> items;
 
-  MenuPage({required this.username});
+  MenuPage({required this.username, required this.items});
+
+  @override
+  _MenuPageState createState() => _MenuPageState(username: username,items: items);
+}
+
+
+
+class _MenuPageState extends State<MenuPage> {
+  final String username;
+  final List<Map<String, dynamic>> items;
+
+    _MenuPageState({required this.username, required this.items});
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +42,7 @@ class MenuPage extends StatelessWidget {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(username),
+              accountName: Text(widget.username),
               accountEmail: Text('seu@email.com'),
               currentAccountPicture: CircleAvatar(
                 child: Icon(Icons.person),
@@ -28,10 +51,10 @@ class MenuPage extends StatelessWidget {
             ListTile(
               title: Text('Minha Lista'),
               onTap: () {
-                // Implemente a ação do Item 1 aqui
+                
               },
             ),
-            Divider(), // Uma linha divisória
+            Divider(),
             ListTile(
               title: Text('Sair'),
               onTap: () {
@@ -45,9 +68,9 @@ class MenuPage extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: Color(0xFF06001A), // Fundo azul escuro
+        color: Color(0xFF06001A),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Centraliza verticalmente
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               'Watchlist',
@@ -57,112 +80,63 @@ class MenuPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20.0), // Espaço em branco
-
-            // Carrossel de imagens centralizado
+            SizedBox(height: 20.0),
             Center(
               child: Container(
-                width: 400, // Largura fixa do carrossel
+                width: 400,
                 child: CarouselSlider(
                   options: CarouselOptions(
-                    height: 675.0, // Altura do carrossel
-                    enlargeCenterPage: true, // Aumenta o centro da imagem
+                    height: 675.0,
+                    enlargeCenterPage: true,
                   ),
-                  items: [
-                    {
-                      'imagePath': 'https://media.fstatic.com/YTz-kfNphh-TH6vn_jT3eTM_Q3U=/322x478/smart/filters:format(webp)/media/movies/covers/2014/09/interestelar_t27814_15.jpg',
-                      'text': 'Interstellar',
-                      'webURL': 'https://www.imdb.com/title/tt0816692/?ref_=nv_sr_srsg_0_tt_7_nm_1_q_inter',
-                      'nota': '9.8',
-                    },
-                    {
-                      'imagePath': 'https://br.web.img2.acsta.net/medias/nmedia/18/89/43/82/20052140.jpg',
-                      'text': 'Vingadores',
-                      'webURL': 'https://www.imdb.com/title/tt0848228/?ref_=tt_sims_tt_t_2',
-                      'nota': '8.2',
-                    },
-                    {
-                      'imagePath': 'https://br.web.img3.acsta.net/pictures/19/04/26/17/30/2428965.jpg',
-                      'text': 'Vingadores: Ultimato',
-                      'webURL': 'https://www.imdb.com/title/tt4154796/?ref_=tt_sims_tt_t_3',
-                      'nota': '9.0',
-                    },
-                    {
-                      'imagePath': 'https://br.web.img2.acsta.net/pictures/18/03/16/15/08/2019826.jpg',
-                      'text': 'Vingadores: Guerra Infinita',
-                      'webURL': 'https://www.imdb.com/title/tt4154756/?ref_=tt_sims_tt_t_2',
-                      'nota': '9.2',
-                    },
-                    {
-                      'imagePath': 'https://m.media-amazon.com/images/M/MV5BZWYzOGEwNTgtNWU3NS00ZTQ0LWJkODUtMmVhMjIwMjA1ZmQwXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_.jpg',
-                      'text': 'Top Gun: Maverick',
-                      'webURL': 'https://www.imdb.com/title/tt1745960/', 
-                      'nota': '9.8',
-                    },
-                  ].map((Map<String, String> item) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WebViewPage(
-            webURL: item['webURL']!,
-            title: item['text']!,
-          ),
-        ),
-      );
-    },
-    child: Column(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: Image.network(
-            item['imagePath']!,
-            width: 500,
-            height: 450,
-            fit: BoxFit.cover,
-          ),
-        ),
-        SizedBox(height: 10.0),
-        Text(
-          item['text']!,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-        ),
-        SizedBox(height: 10.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Implemente a lógica para adicionar a nota aqui
-              },
-              child: Text('Adicionar Nota'),
-            ),
-            SizedBox(width: 10.0),
-            ElevatedButton(
-              onPressed: () {
-                // Implemente a lógica para adicionar à lista aqui
-              },
-              child: Text('Adicionar à Lista'),
-            ),
-          ],
-        ),
-        SizedBox(height: 10.0),
-        Text(
-          'Nota: ' + item['nota']!, // Aqui você pode exibir a nota atual
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-        ),
-      ],
-    ),
-  );
-}).toList(),
-                ),
+                  items: items.map((item) {
+                    return GestureDetector(
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image.memory(
+                              item['poster']!,
+                              width: 500,
+                              height: 460,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 10.0),
+                          Text(
+                            item['title']!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          SizedBox(height: 10.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  showNoteModal(context,item['id']);
+                                },
+                                child: Text('Adicionar Nota'),
+                              ),
+                              SizedBox(width: 10.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDescriptionModal(context,item['description']);
+                              },
+                              child: Text('Descrição'),
+                            ),
+                            ],
+                          ),
+                          SizedBox(height: 10.0),
+                          
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                )
+
               ),
             ),
           ],
@@ -171,6 +145,114 @@ class MenuPage extends StatelessWidget {
     );
   }
 }
+
+
+void showNoteModal(BuildContext context, int movieId) {
+  TextEditingController notaController = TextEditingController();
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Adicionar Nota'),
+                TextField(
+                  controller: notaController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(labelText: 'Sua nota'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    String notaText = notaController.text;
+                    if (notaText.isNotEmpty) {
+                      double? nota = double.tryParse(notaText);
+                      if (nota != null) {
+                        Navigator.pop(context);
+                        sendRating(movieId, nota);
+                      } else {
+                        print('Entrada inválida');
+                      }
+                    } else {
+                      // A entrada está vazia.
+                      print('Nota vazia');
+                    }
+                  },
+                  child: Text('Salvar Nota'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
+
+void showDescriptionModal(BuildContext context, String description) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            color: Color(0xFF06001A),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> sendRating(int movieId, double rating) async {
+  final String apiUrl = 'http://4.228.23.227/users/1/items/';
+  final Map<String, dynamic> data = {
+    'movieId': movieId,
+    'rating': rating,
+  };
+
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(data),
+  );
+
+  if (response.statusCode == 200) {
+    print('Nota enviada com sucesso.');
+  } else {
+    print('Falha ao enviar nota.');
+  }
+}
+
+
+
 
 class WebViewPage extends StatelessWidget {
   final String webURL;
@@ -182,7 +264,7 @@ class WebViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title), // Use o título fornecido como título da AppBar
+        title: Text(title), 
       ),
       body: WebView(
         initialUrl: webURL,
