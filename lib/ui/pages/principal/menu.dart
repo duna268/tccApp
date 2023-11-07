@@ -116,7 +116,7 @@ class _MenuPageState extends State<MenuPage> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  showNoteModal(context,item['id']);
+                                  showNoteModal(context,item['movieId']);
                                 },
                                 child: Text('Adicionar Nota'),
                               ),
