@@ -232,7 +232,7 @@ void showDescriptionModal(BuildContext context, String description) {
 }
 
 Future<void> sendRating(int movieId, double rating) async {
-  final String apiUrl = 'http://4.228.23.227/users/1/items/';
+  final String apiUrl = 'http://20.226.237.146/users/1/items/';
   final Map<String, dynamic> data = {
     'movieId': movieId,
     'rating': rating,
