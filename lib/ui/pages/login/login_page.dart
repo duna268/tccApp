@@ -57,8 +57,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> fetchDataAndAddToList(List<Map<String, dynamic>> items) async {
-    // final response = await http.get(Uri.parse('http://4.228.23.227/not_recommend/'));
-    final response = await http.get(Uri.parse('http://4.228.23.227/recommend/?skip=0&limit=10'));
+    final response = await http.get(Uri.parse('http://20.226.237.146/not_recommend/'));
+    // final response = await http.get(Uri.parse('http://4.228.23.227/recommend/?skip=0&limit=15'));
     if (response.statusCode == 200) {
       final List<dynamic> responseDataList = json.decode(response.body);
 
