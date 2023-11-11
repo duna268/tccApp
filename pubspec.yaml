@@ -1,6 +1,5 @@
 name: tccApp
-description: Aplicativo do Conselho Regional de Medicina do Estado De São Paulo.
-
+description: TCC app
 version: 1.8.8+25
 
 environment:
